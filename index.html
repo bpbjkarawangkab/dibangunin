@@ -864,7 +864,7 @@ function showForms(searchMode,rupQuery){
   }else{
     const lbl=OPD_LIST.find(o=>o.key===selectedOPD)?.label||selectedOPD;
     document.getElementById("infoText").innerHTML=
-      "<strong>"+lbl+"</strong> — "+paketData.length+" paket · Klik nama pekerjaan untuk input/edit data";
+      "<strong>"+lbl+"</strong> — "+paketData.length+" paket &nbsp;|&nbsp; 💡 Klik <u>nama pekerjaan</u> untuk membuka form input/edit data";
     document.getElementById("headerOPD").textContent=selectedOPD;
     document.getElementById("headerOPD").style.display="block";
   }
@@ -947,7 +947,9 @@ function renderPage(){
 
     // ── PL extra (read-only) ──
     const plExtra = isPL && p.jenis_pl
-      ? `<div style="margin-top:4px;font-size:10px;color:var(--amber);font-family:var(--mono)">⚡ ${p.jenis_pl}</div>`
+      ? p.jenis_pl === "Transaksional"
+        ? `<div style="margin-top:4px;font-size:10px;font-family:var(--mono);color:#1A3F6F;background:#EBF4FF;border:1px solid #B3D1F5;border-radius:3px;padding:1px 6px;display:inline-block">🔵 Transaksional</div>`
+        : `<div style="margin-top:4px;font-size:10px;font-family:var(--mono);color:#6B3A00;background:#FFF0D6;border:1px solid #FFBC6B;border-radius:3px;padding:1px 6px;display:inline-block">🟠 Non-Transaksional</div>`
       : "";
 
     // ── Progress bar ──
