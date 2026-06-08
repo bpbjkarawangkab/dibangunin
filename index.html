@@ -84,7 +84,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   letter-spacing:.03em;padding-right:28px;
 }
 .date-wrap input[type=date]{
-  position:absolute;right:0;top:0;bottom:0;width:28px;
+  position:absolute;right:0;top:0;bottom:0;width:32px;
   opacity:0;padding:0;border:none;
   /* keep full width so the calendar icon is clickable */
   z-index:2;
@@ -206,7 +206,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 /* Modal Login */
 .login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center}
 .login-overlay.show{display:flex}
-.login-box{background:#fff;border-radius:12px;padding:32px;max-width:400px;width:90%;box-shadow:0 12px 48px rgba(0,0,0,.2)}
+.login-box{background:#fff;border-radius:12px;padding:32px;max-width:400px;width:90%;box-shadow:0 12px 48px rgba(0,0,0,.2);position:relative}
+.btn-close-login{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-muted);width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;transition:background .12s,color .12s;line-height:1}
+.btn-close-login:hover{background:var(--surface2);color:var(--text)}
 .login-logo{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--green);margin-bottom:4px}
 .login-tagline{font-size:11px;color:var(--text-muted);margin-bottom:20px;line-height:1.4}
 .login-opd-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--green)}
@@ -340,6 +342,7 @@ const OPD_LIST=[
 <!-- Modal Login -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
+    <button class="btn-close-login" onclick="document.getElementById('loginOverlay').classList.remove('show')" title="Tutup">✕</button>
     <div class="login-logo">DIBANGUNIN</div>
     <div class="login-tagline">Digitalisasi Pengendalian Pembangunan Secara Intensif<br>Kab. Karawang — TA 2026</div>
     <div class="login-opd-name" id="loginOPDName">— Pilih OPD —</div>
