@@ -1313,14 +1313,12 @@ async function simpanDetail(){
 }
 
 function goToPage(page){
-  simpanHalamanIni();
   currentPage = page;
   renderPage();
   document.getElementById("mainTable").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 function ubahPageSize(val){
-  simpanHalamanIni();
   pageSize    = parseInt(val);
   currentPage = 1;
   renderPage();
