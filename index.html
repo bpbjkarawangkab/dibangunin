@@ -306,7 +306,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   top: 30px; /* Mengunci baris kedua tepat di bawah baris pertama header */
 }
 /* Mengubah background input Sub Kegiatan, Output, dan Keterangan menjadi putih permanen */
-.tbl tbody tr textarea[data-k="sub_kegiatan"],
+.tbl tbody tr textarea[data-k="bidang"],
 .tbl tbody tr textarea[data-k="output"],
 .tbl tbody tr textarea[data-k="keterangan"] {
   background-color: #FFFFFF !important;
@@ -370,6 +370,18 @@ const OPD_LIST=[
   {key:"RSUD_JATISARI",label:"RSUD Jatisari"},
   {key:"RSUD_KARAWANG",label:"RSUD Karawang"},
 ];
+const BIDANG_OPD={
+  "DPUPR"        :["Sekretariat","Bidang Jalan dan Jembatan","Bidang Sumber Daya Air","Bidang Bangunan dan Jasa Konstruksi","Bidang Penataan Ruang"],
+  "DPRKP"        :["Sekretariat","Bidang Perumahan dan Permukiman","Bidang Prasarana Sarana dan Utilitas","Bidang Sanitasi dan Pengelolaan Air Minum","Bidang Pertanahan"],
+  "DISDIK"       :["Sekretariat","Bidang Pendidikan Dasar","Bidang Pendidikan Anak Usia Dini dan Pendidikan Non Formal/Kesetaraan","Bidang Sarana dan Prasarana Pendidikan","Bidang Kebudayaan"],
+  "DINKES"       :["Sekretariat","Bidang Pelayanan Kesehatan","Bidang Kesehatan Masyarakat","Bidang Pencegahan dan Pengendalian Penyakit","Bidang Sumberdaya Kesehatan"],
+  "DLH"          :["Sekretariat","Bidang Tata Lingkungan dan Penataan Peraturan Lingkungan","Bidang Pengendalian Pencemaran dan Keanekaragaman Hayati","Bidang Kebersihan, Pengelolaan Sampah dan Limbah"],
+  "DISHUB"       :["Sekretariat","Bidang Lalu Lintas, Angkutan, Pengembangan dan Keselamatan","Bidang Prasarana"],
+  "DPMD"         :["Sekretariat","Bidang Penataan, Pemberdayaan dan Kerjasama Desa","Bidang Bina Pemerintahan Desa"],
+  "DISTAN"       :["Sekretariat","Bidang Sarana Pertanian","Bidang Prasarana Pertanian","Bidang Peternakan","Bidang Pangan","Bidang Perikanan Tangkap dan Pengawasan Sumberdaya Kelautan dan Perikanan","Bidang Perikanan Budidaya dan Penguatan Daya Saing Produk Perikanan"],
+  "RSUD_JATISARI":["Bagian Tata Usaha","Bidang Pelayanan Kesehatan","Bidang SDM dan Sarana & Prasarana"],
+  "RSUD_KARAWANG":["Bidang Pelayanan Medik","Bidang Penunjang Medik","Bidang Keperawatan","Bagian Sekretariat","Bagian Keuangan","Bagian Perencanaan dan Keuangan"],
+};
 </script>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -516,7 +528,7 @@ const OPD_LIST=[
               <th rowspan="3">No</th>
               <th rowspan="3" style="min-width:88px">RUP</th>
               <th rowspan="3" style="min-width:200px">Nama Pekerjaan</th>
-              <th rowspan="3" style="min-width:200px">Sub Kegiatan</th>
+              <th rowspan="3" style="min-width:200px">Bidang</th>
               <th colspan="2">Lokasi</th>
               <th rowspan="3" style="min-width:90px">Sumber Dana</th>
               <th rowspan="3" style="min-width:120px">Pagu (Rp)</th>
@@ -874,7 +886,7 @@ function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
       nilai_kontrak,
       nilai_kontrak_src,
       // Data OPD dari Sheets
-      sub_kegiatan:        fromSheet.sub_kegiatan        || "",
+      bidang:              fromSheet.bidang              || "",
       desa:                fromSheet.desa                || "",
       kecamatan:           fromSheet.kecamatan           || "",
       tw_mulai:            fromSheet.tw_mulai            || "",
@@ -981,7 +993,7 @@ function renderPage(){
 
     // ── Nama cell ──
     // Orphan: nama tidak bisa diklik — harus perbarui RUP dulu
-    const sudahDiisi = !!(p.sub_kegiatan||p.tgl_kontrak||p.pct_keu||p.pct_fisik||p.nama_penyedia);
+    const sudahDiisi = !!(p.bidang||p.tgl_kontrak||p.pct_keu||p.pct_fisik||p.nama_penyedia);
     const namaCell = isOrphan
       ? `<span style="font-size:12px;font-weight:500;color:#8B1A1A;display:block;line-height:1.4">${p.nama}</span>
          <span style="font-size:10px;color:#8B1A1A;opacity:.7;font-style:italic">⚠ Perbarui RUP sebelum dapat mengedit</span>`
@@ -1055,7 +1067,7 @@ function renderPage(){
       <td class="no-col">${p.no}</td>
       <td class="rup-col">${rupCell}</td>
       <td style="min-width:200px">${namaCell}</td>
-      <td style="min-width:200px">${txt(p.sub_kegiatan,"-")}</td>
+      <td style="min-width:200px">${txt(p.bidang,"-")}</td>
       <td style="min-width:120px;text-align:center">${txt(p.desa)}</td>
       <td style="min-width:110px;text-align:center">${txt(p.kecamatan)}</td>
       <td style="font-size:12px;white-space:nowrap;text-align:center;color:${p.sumber_dana?'var(--text)':'var(--text-light)'}">${p.sumber_dana||'—'}</td>
@@ -1117,8 +1129,13 @@ function bukaDetailModal(i){
     <div class="detail-section-title">📋 Data Umum</div>
 
     <div class="detail-field full">
-      <label>Sub Kegiatan <span class="req-tag">*</span></label>
-      <textarea id="d_sub_kegiatan" placeholder="Isi Nama Sub Kegiatan sesuai DPA..." rows="2">${p.sub_kegiatan||''}</textarea>
+      <label>Bidang <span class="req-tag">*</span></label>
+      <select id="d_bidang" style="color:${p.bidang?'var(--text)':'var(--text-light)'}">
+        <option value="" style="color:var(--text-light)">— Pilih Bidang —</option>
+        ${(BIDANG_OPD[p.opd||selectedOPD]||[]).map(b =>
+          `<option value="${b}" style="color:var(--text)"${p.bidang===b?' selected':''}>${b}</option>`
+        ).join('')}
+      </select>
     </div>
 
     <div class="detail-field">
@@ -1232,7 +1249,7 @@ function bukaDetailModal(i){
   `;
 
   // Pasang event onchange untuk TW select agar warna update
-  ["d_tw_mulai","d_tw_selesai","d_jenis_pl"].forEach(id=>{
+  ["d_bidang","d_tw_mulai","d_tw_selesai","d_jenis_pl"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.onchange=function(){
       this.style.color=this.value?'var(--text)':'var(--text-light)';
@@ -1280,7 +1297,7 @@ function _collectDetail(){
   const g = id => { const el=document.getElementById(id); return el?el.value:""; };
 
   return {
-    sub_kegiatan:        g("d_sub_kegiatan"),
+    bidang:              g("d_bidang"),
     desa:                g("d_desa"),
     kecamatan:           g("d_kecamatan"),
     tw_mulai:            g("d_tw_mulai"),
@@ -1310,7 +1327,7 @@ async function simpanDetail(){
   
   // ── Validasi field wajib ──
   const wajib = [
-    {id:"d_sub_kegiatan", label:"Sub Kegiatan"},
+    {id:"d_bidang",       label:"Bidang"},
     {id:"d_desa",         label:"Desa / Kelurahan"},
     {id:"d_kecamatan",    label:"Kecamatan"},
     {id:"d_tw_mulai",     label:"Rencana Mulai (TW)"},
@@ -1360,8 +1377,13 @@ async function simpanDetail(){
   const opdSave = p.opd || selectedOPD;
   const now    = new Date().toISOString();
 
-  // Update paketData lokal
-  Object.assign(paketData[i], detail, { updated: now });
+  // Update paketData lokal — termasuk update _src agar badge Manual OPD muncul
+  const srcUpdate = {};
+  if (detail.nama_penyedia && p.nama_penyedia_src !== "realisasi")
+    srcUpdate.nama_penyedia_src = "manual";
+  if (detail.nilai_kontrak && p.nilai_kontrak_src !== "realisasi")
+    srcUpdate.nilai_kontrak_src = "manual";
+  Object.assign(paketData[i], detail, srcUpdate, { updated: now });
 
   // Siapkan payload — satu paket saja
   const payload = {
