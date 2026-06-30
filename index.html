@@ -1307,7 +1307,7 @@ async function simpanDetail(){
 
   const isPL = (paketData[_detailIdx]?.metode||"").toLowerCase().includes("pengadaan langsung");
   const g    = id => { const el=document.getElementById(id); return el?el.value.trim():""; };
-
+  
   // ── Validasi field wajib ──
   const wajib = [
     {id:"d_sub_kegiatan", label:"Sub Kegiatan"},
@@ -1336,6 +1336,22 @@ async function simpanDetail(){
     const firstEl = document.getElementById(errors[0].id);
     if(firstEl) firstEl.scrollIntoView({behavior:"smooth", block:"center"});
     return;
+  }
+
+  // ── Validasi: Nilai Kontrak tidak boleh melebihi Pagu ──
+  const pkt = paketData[_detailIdx];
+  const isNilaiReadonly = pkt.nilai_kontrak_src === "realisasi";
+  if (!isNilaiReadonly) {
+    const nilaiInput = parseFloat(g("d_nilai_kontrak").replace(/\D/g,"")) || 0;
+    const paguPaket   = parseFloat(pkt.pagu) || 0;
+    if (nilaiInput > paguPaket) {
+      const elNilai = document.getElementById("d_nilai_kontrak");
+      elNilai.style.borderColor = "#E53E3E";
+      elNilai.style.boxShadow   = "0 0 0 3px rgba(229,62,62,.1)";
+      toast("Nilai Kontrak (Rp "+nilaiInput.toLocaleString("id-ID")+") tidak boleh melebihi Pagu (Rp "+paguPaket.toLocaleString("id-ID")+")","error");
+      elNilai.scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
   }
 
   const i      = _detailIdx;
