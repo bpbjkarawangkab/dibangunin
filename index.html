@@ -1613,6 +1613,12 @@ function fmtPagu(val){
   return isNaN(n)?"—":n.toLocaleString("id-ID");
 }
 
+function fmtPct(val){
+  const n = parseFloat(val);
+  if(val===""||val===null||val===undefined||isNaN(n)) return "—";
+  return n.toLocaleString("id-ID",{minimumFractionDigits:2,maximumFractionDigits:2})+"%";
+}
+
 function fmtRp(inp){
   const v=inp.value.replace(/\D/g,"");
   inp.value=v?parseInt(v).toLocaleString("id-ID"):"";
@@ -1680,7 +1686,7 @@ function renderDashboard(){
   document.getElementById("dashRefreshInfo").innerHTML =
     `Data per: ${genDate} &nbsp;·&nbsp; <a href="javascript:loadDashboard(true)" style="color:var(--green);text-decoration:underline;cursor:pointer">🔄 Refresh</a>`;
 
-  const pctIsi = summary.total_paket ? Math.round((summary.total_sudah_diisi/summary.total_paket)*100) : 0;
+  const pctIsi = summary.total_paket ? Math.round((summary.total_sudah_diisi/summary.total_paket)*10000)/100 : 0;
   document.getElementById("dashSummary").innerHTML = `
     <div class="dash-card">
       <div class="dash-label">Total Paket Konstruksi</div>
@@ -1692,13 +1698,13 @@ function renderDashboard(){
       <div class="dash-value">${summary.total_sudah_diisi.toLocaleString("id-ID")}</div>
       <div class="dash-progress-row">
         <div class="dash-progress-bg"><div class="dash-progress-fill" style="width:${pctIsi}%;background:var(--green)"></div></div>
-        <div class="dash-progress-pct">${pctIsi}%</div>
+        <div class="dash-progress-pct">${fmtPct(pctIsi)}</div>
       </div>
     </div>
     <div class="dash-card amber">
       <div class="dash-label">Rata-rata Progress</div>
-      <div class="dash-value">${summary.avg_pct_fisik}%</div>
-      <div class="dash-sub">Fisik &nbsp;·&nbsp; Keuangan ${summary.avg_pct_keu}%</div>
+      <div class="dash-value">${fmtPct(summary.avg_pct_fisik)}</div>
+      <div class="dash-sub">Fisik &nbsp;·&nbsp; Keuangan ${fmtPct(summary.avg_pct_keu)}</div>
     </div>
     <div class="dash-card ${summary.total_orphan>0?'red':''}">
       <div class="dash-label">RUP Perlu Diperbarui</div>
@@ -1715,7 +1721,7 @@ function renderDashboard(){
 
   grid.innerHTML = per_opd.map((o, idx) => {
     const lbl = OPD_LIST.find(x=>x.key===o.opd)?.label || o.opd;
-    const pctIsiOPD = o.jumlah_paket ? Math.round((o.sudah_diisi/o.jumlah_paket)*100) : 0;
+    const pctIsiOPD = o.jumlah_paket ? Math.round((o.sudah_diisi/o.jumlah_paket)*10000)/100 : 0;
     const hasOrphan = o.orphan > 0;
 
     return `
@@ -1731,13 +1737,13 @@ function renderDashboard(){
       </div>
       <div class="dash-progress-row">
         <div class="dash-progress-bg"><div class="dash-progress-fill" style="width:${pctIsiOPD}%;background:var(--green)"></div></div>
-        <div class="dash-progress-pct">${pctIsiOPD}%</div>
+        <div class="dash-progress-pct">${fmtPct(pctIsiOPD)}</div>
       </div>
       <div class="dash-opd-detail" id="dashDetail_${idx}">
         <div class="dash-opd-detail-row"><span>Pagu Total</span><strong>Rp ${fmtPagu(o.pagu)}</strong></div>
         <div class="dash-opd-detail-row"><span>Nilai Kontrak</span><strong>Rp ${fmtPagu(o.nilai_kontrak)}</strong></div>
-        <div class="dash-opd-detail-row"><span>Rata-rata % Keuangan</span><strong>${o.avg_pct_keu}%</strong></div>
-        <div class="dash-opd-detail-row"><span>Rata-rata % Fisik</span><strong>${o.avg_pct_fisik}%</strong></div>
+        <div class="dash-opd-detail-row"><span>Rata-rata % Keuangan</span><strong>${fmtPct(o.avg_pct_keu)}</strong></div>
+        <div class="dash-opd-detail-row"><span>Rata-rata % Fisik</span><strong>${fmtPct(o.avg_pct_fisik)}</strong></div>
         <div class="dash-opd-detail-row"><span>Paket Orphan (RUP berubah)</span><strong style="color:${hasOrphan?'var(--red)':'var(--text)'}">${o.orphan}</strong></div>
       </div>
     </div>`;
