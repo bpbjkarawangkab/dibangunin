@@ -1117,6 +1117,10 @@ function mergeData(dataSirup, dataSheets, dataRealisasi=[]){
       keterangan:          fromSheet.keterangan          || "",
       jenis_pl:            fromSheet.jenis_pl            || "",
       updated:             fromSheet.updated             || "",
+      alamat_penyedia:     fromSheet.alamat_penyedia     || "",
+      program_pokir:       fromSheet.program_pokir       || "",
+      program_pokir_src:   fromSheet.program_pokir_src   || "",
+      pengusul_pokir:      fromSheet.pengusul_pokir      || "",
     };
   });
 
@@ -1757,6 +1761,7 @@ function bukaModalPL(i){
     <div class="detail-field" id="pl_pengusul_wrap" style="display:${p.program_pokir==="Pokir DPRD"?"flex":"none"}">
       <label>Pengusul (Pokir DPRD)</label>
       <input type="text" id="pl_pengusul" value="${p.pengusul_pokir||''}" placeholder="Nama pengusul">
+      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">isi "-" jika tidak memiliki informasi nama pengusul</div>
     </div>
 
     <div class="detail-field full">
